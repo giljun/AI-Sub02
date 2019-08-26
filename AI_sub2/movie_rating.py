@@ -11,6 +11,7 @@ Req 1-1-1. 데이터 읽기
 read_data(): 데이터를 읽어서 저장하는 함수
 """
 
+
 def read_data(filename):
     return None
 
