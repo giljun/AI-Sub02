@@ -1,4 +1,4 @@
-import pickle
+﻿import pickle
 from threading import Thread
 import sqlite3
 
@@ -47,6 +47,6 @@ def app_mentioned(event_data):
 @app.route("/", methods=["GET"])
 def index():
     return "<h1>Server is ready.</h1>"
-
+  
 if __name__ == '__main__':
     app.run()
