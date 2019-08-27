@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
+
+# 기존의 코드와는 다른 변경된 부분
+import json
+import os
+from pprint import pprint
+
 import pickle
 
 from konlpy.tag import Okt
@@ -12,7 +20,12 @@ read_data(): 데이터를 읽어서 저장하는 함수
 """
 
 def read_data(filename):
-    return None
+    with open(filename, 'r') as f:
+        data = [line.split('\t') for line in f.read().splitlines()]
+        # txt 파일의 헤더( id document label )는 제외하기
+        data = data[1:]
+    return data
+
 
 """
 Req 1-1-2. 토큰화 함수
@@ -20,21 +33,41 @@ tokenize(): 텍스트 데이터를 받아 KoNLPy의 okt 형태소 분석기로 �
 """
 
 def tokenize(doc):
-    return
+    # norm은 정규화, stem은 근어로 표시하기를 나타냄
+    okt = Okt()
+    return ['/'.join(t) for t in okt.pos(doc, norm=True, stem=True)]
 
 """
 데이터 전 처리
 """
 
 # train, test 데이터 읽기
-train_data = read_data('ratings_train.txt')
-test_data = read_data('ratings_test.txt')
+# train_data = read_data('ratings_train.txt')
+# test_data = read_data('ratings_test.txt')
 
+# 나중에 위의 코드를 사용할 예정
+train_data = read_data('test.txt')
+test_data = read_data('test.txt')
 
 # Req 1-1-2. 문장 데이터 토큰화
 # train_docs, test_docs : 토큰화된 트레이닝, 테스트  문장에 label 정보를 추가한 list
-train_docs = None
-test_docs = None
+# train_docs = None
+# test_docs = None
+if os.path.isfile('train_docs.json'):
+    with open('train_docs.json') as f:
+        train_docs = json.load(f)
+    with open('test_docs.json') as f:
+        test_docs = json.load(f)
+else:
+    train_docs = [(tokenize(row[1]), row[2]) for row in train_data]
+    test_docs =[(tokenize(row[1]), row[2]) for row in test_data]
+    # JSON 파일로 저장
+    with open('train_docs.json', 'w', encoding="utf-8") as make_file:
+        json.dump(train_docs, make_file, ensure_ascii=False, indent="\t")
+    with open('test_docs.json', 'w', encoding="utf-8") as make_file:
+        json.dump(test_docs, make_file, ensure_ascii=False, indent="\t")
+
+pprint(train_docs[0])
 
 
 # Req 1-1-3. word_indices 초기화
