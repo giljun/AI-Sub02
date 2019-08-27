@@ -11,9 +11,12 @@ Req 1-1-1. 데이터 읽기
 read_data(): 데이터를 읽어서 저장하는 함수
 """
 
-
 def read_data(filename):
-    return None
+    with open(filename, 'r', encoding="utf-8") as f:
+        data = [line.split('\t') for line in f.read().splitlines()]
+        # txt 파일의 헤더(id document label)는 제외하기
+        data = data[1:]
+    return data
 
 """
 Req 1-1-2. 토큰화 함수
@@ -21,7 +24,8 @@ tokenize(): 텍스트 데이터를 받아 KoNLPy의 okt 형태소 분석기로 �
 """
 
 def tokenize(doc):
-    return
+    okt = Okt()
+    return ['/'.join(t) for t in okt.pos(doc, norm=True, stem=True)]
 
 """
 데이터 전 처리
