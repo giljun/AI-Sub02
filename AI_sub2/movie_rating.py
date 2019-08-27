@@ -12,7 +12,21 @@ read_data(): 데이터를 읽어서 저장하는 함수
 """
 
 def read_data(filename):
-    return None
+    with open(filename, 'r') as f:
+        data = [line.split('\t') for line in f.read().splitlines()]
+        data = data[1:]
+    return data
+
+# train, test 데이터 읽기
+train_data = read_data('ratings_train.txt')
+test_data = read_data('ratings_test.txt')
+
+print(len(train_data))
+print(len(train_data[0]))
+print(len(test_data))
+print(len(test_data[0]))
+
+
 
 """
 Req 1-1-2. 토큰화 함수
@@ -25,10 +39,6 @@ def tokenize(doc):
 """
 데이터 전 처리
 """
-
-# train, test 데이터 읽기
-train_data = read_data('ratings_train.txt')
-test_data = read_data('ratings_test.txt')
 
 
 # Req 1-1-2. 문장 데이터 토큰화
