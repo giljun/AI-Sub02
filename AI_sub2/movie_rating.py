@@ -18,6 +18,7 @@ def read_data(filename):
         data = data[1:]
     return data
 
+
 """
 Req 1-1-2. 토큰화 함수
 tokenize(): 텍스트 데이터를 받아 KoNLPy의 okt 형태소 분석기로 토크나이징
@@ -32,49 +33,74 @@ def tokenize(doc):
 """
 
 # train, test 데이터 읽기
-train_data = read_data('ratings_train.txt')
-test_data = read_data('ratings_test.txt')
+train_data = read_data('test.txt')
+test_data = read_data('test.txt')
+#  train_data = read_data('ratings_train.txt')
+# test_data = read_data('ratings_test.txt')
 
 
 # Req 1-1-2. 문장 데이터 토큰화
 # train_docs, test_docs : 토큰화된 트레이닝, 테스트  문장에 label 정보를 추가한 list
-train_docs = None
-test_docs = None
-
+train_docs = [(tokenize(row[1])) for row in train_data]
+test_docs = [(tokenize(row[1])) for row in test_data]
 
 # Req 1-1-3. word_indices 초기화
 word_indices = {}
 
 # Req 1-1-3. word_indices 채우기
+for token in train_docs:
+    for str in token:
+        tmp = str.split("/")
+        if tmp[0] not in word_indices:
+            word_indices[tmp[0]] = len(word_indices)
+
+print(word_indices)
 
 # Req 1-1-4. sparse matrix 초기화
 # X: train feature data
 # X_test: test feature data
-X = None
-X_test = None
-
+X = lil_matrix((len(train_docs), len(word_indices)))
+X_test = lil_matrix((len(test_docs), len(word_indices)))
 
 # 평점 label 데이터가 저장될 Y 행렬 초기화
 # Y: train data label
 # Y_test: test data label
-Y = None
-Y_test = None
+Y = lil_matrix((len(train_data), 1))
+Y_test = lil_matrix((len(test_data), 1))
 
 # Req 1-1-5. one-hot 임베딩
 # X,Y 벡터값 채우기
+index = 0
 
+for token in train_docs:
+    for str in token:
+        tmp = str.split("/")
+        X[index, word_indices[tmp[0]]] = 1
+    index = index+1
+
+index = 0
+for i in train_data:
+    Y[index,0] = i[2]
+index = 0
+for i in test_data:
+    Y_test[index,0] = i[2]
+
+print(X.todense())
+print(Y.todense())
 
 """
 트레이닝 파트
 clf  <- Naive baysian mdoel
 clf2 <- Logistic regresion model
 """
-
+print(Y.todense())
 # Req 1-2-1. Naive baysian mdoel 학습
-clf = None
+clf = MultinomialNB()
+clf.fit(X.todense(), Y.todense())
 
 # Req 1-2-2. Logistic regresion mdoel 학습
-clf2 = None
+clf2 = LogisticRegression()
+clf2.fit(X.todense(), Y.todense())
 
 
 """
@@ -82,9 +108,8 @@ clf2 = None
 """
 
 # Req 1-3-1. 문장 데이터에 따른 예측된 분류값 출력
-print("Naive bayesian classifier example result: {}, {}".format(test_data[3][1],None))
-print("Logistic regression exampleresult: {}, {}".format(test_data[3][1],None))
-
+print("Naive bayesian classifier example result: {}, {}".format(test_data[1][1], clf.predict(X_test[1])))
+print("Logistic regression exampleresult: {}, {}".format(test_data[1][1],clf2.predict(X_test[1])))
 # Req 1-3-2. 정확도 출력
 print("Naive bayesian classifier accuracy: {}".format(None))
 print("Logistic regression accuracy: {}".format(None))
@@ -92,6 +117,7 @@ print("Logistic regression accuracy: {}".format(None))
 """
 데이터 저장 파트
 """
+'''
 
 # Req 1-4. pickle로 학습된 모델 데이터 저장
 
@@ -380,3 +406,4 @@ model2 = None
 # Req 3-4-2. 정확도 측정
 print("Logistic_Regression_Classifier accuracy: {}".format(None))
 
+'''
