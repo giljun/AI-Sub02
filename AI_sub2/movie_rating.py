@@ -25,8 +25,8 @@ def tokenize(doc):
     return okt.morphs(doc)
 
 # 데이터 전 처리 train, test 데이터 읽기
-train_data = read_data('test.txt')
-test_data = read_data('test.txt')
+train_data = read_data('ratings_train.txt')
+test_data = read_data('ratings_test.txt')
 
 """
 Req 1-1-2. 문장 데이터 토큰화
@@ -67,7 +67,6 @@ for idx, lists in enumerate(train_docs):
         X[idx, word_indices[token]] = 1
 
 
-
 """
 트레이닝 파트
 clf  <- Naive baysian mdoel
@@ -76,11 +75,11 @@ clf2 <- Logistic regresion model
 
 # Req 1-2-1. Naive baysian mdoel 학습
 clf = MultinomialNB()
-clf.fit(X.todense(), Y)
+clf.fit(X, Y)
 
 # Req 1-2-2. Logistic regresion mdoel 학습
 clf2 = LogisticRegression()
-clf2.fit(X.todense(), Y)
+clf2.fit(X, Y)
 
 
 """
@@ -90,19 +89,27 @@ clf2.fit(X.todense(), Y)
 print("Naive bayesian classifier example result: {}, {}".format(test_data[1][1], clf.predict(X_test[1])))
 print("Logistic regression exampleresult: {}, {}".format(test_data[1][1],clf2.predict(X_test[1])))
 # Req 1-3-2. 정확도 출력
-print("Naive bayesian classifier accuracy: {}".format(None))
-print("Logistic regression accuracy: {}".format(None))
+print("Naive bayesian classifier accuracy: {}".format(clf.score(X, Y)))
+print("Logistic regression accuracy: {}".format(clf2.score(X, Y)))
 
 
 
 """
 데이터 저장 파트
-"""
-'''
-
 # Req 1-4. pickle로 학습된 모델 데이터 저장
+"""
+with open('naive_model.clf', 'wb') as handle:
+    pickle.dump(clf, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    
+with open('rogistic_model.clf', 'wb') as handle:
+    pickle.dump(clf2, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+
+
+
+'''
+"""
 # Naive bayes classifier algorithm part
 # 아래의 코드는 심화 과정이기에 사용하지 않는다면 주석 처리하고 실행합니다.
 
