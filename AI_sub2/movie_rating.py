@@ -13,7 +13,8 @@ from konlpy.tag import Okt
 from scipy.sparse import lil_matrix
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
-
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 """
 Req 1-1-1. 데이터 읽기
 read_data(): 데이터를 읽어서 저장하는 함수
@@ -23,7 +24,7 @@ def read_data(filename):
     with open(filename, 'r', encoding="utf-8") as f:
         data = [line.split('\t') for line in f.read().splitlines()]
         # txt 파일의 헤더( id document label )는 제외하기
-        data = data[1:]
+        data = np.array(data[1:])
     return data
 
 
@@ -77,23 +78,27 @@ for tokens, index in train_docs:
         if temp[0] not in word_indices:
             word_indices[temp[0]] = len(word_indices)
 
-# 임시 테스트
-
 # Req 1-1-4. sparse matrix 초기화
 # X: train feature data
 # X_test: test feature data
-X = None
-X_test = None
+X = lil_matrix((len(train_docs), len(word_indices)))
+X_test = lil_matrix((len(test_docs), len(word_indices)))
 
 # 평점 label 데이터가 저장될 Y 행렬 초기화
 # Y: train data label
 # Y_test: test data label
-Y = None
-Y_test = None
+Y = np.array(train_data[:, 2])
+Y_test = np.array(test_data[:, 2])
 
 # Req 1-1-5. one-hot 임베딩
 # X,Y 벡터값 채우기
+index = 0
 
+for tokens, i in train_docs:
+    for token in tokens:
+        temp = token.split("/")
+        X[index, word_indices[temp[0]]] = 1
+    index = index+1
 
 """
 트레이닝 파트
@@ -102,10 +107,12 @@ clf2 <- Logistic regresion model
 """
 
 # Req 1-2-1. Naive baysian mdoel 학습
-clf = None
+clf = MultinomialNB()
+clf.fit(X, Y)
 
 # Req 1-2-2. Logistic regresion mdoel 학습
-clf2 = None
+clf2 = LogisticRegression()
+clf2.fit(X, Y)
 
 
 """
@@ -113,12 +120,12 @@ clf2 = None
 """
 
 # Req 1-3-1. 문장 데이터에 따른 예측된 분류값 출력
-print("Naive bayesian classifier example result: {}, {}".format(test_data[3][1],None))
-print("Logistic regression exampleresult: {}, {}".format(test_data[3][1],None))
+print("Naive bayesian classifier example result: {}, {}".format(test_data[3][1], clf.predict(X_test[3])))
+print("Logistic regression exampleresult: {}, {}".format(test_data[3][1], clf2.predict(X_test[3])))
 
 # Req 1-3-2. 정확도 출력
-print("Naive bayesian classifier accuracy: {}".format(None))
-print("Logistic regression accuracy: {}".format(None))
+print("Naive bayesian classifier accuracy: {}".format(clf.score(X, Y)))
+print("Logistic regression accuracy: {}".format(clf2.score(X, Y)))
 
 """
 데이터 저장 파트
