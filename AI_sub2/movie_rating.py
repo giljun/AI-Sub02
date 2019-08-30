@@ -250,6 +250,7 @@ class Naive_Bayes_Classifier(object):
     테스트 데이터의 label값을 비교하여 정확도를 계산
     """
     
+    
     def score(self, X_test, Y_test):
         
         return None
