@@ -20,6 +20,11 @@ slack_events_adaptor = SlackEventAdapter(SLACK_SIGNING_SECRET, "/listening", app
 slack_web_client = WebClient(token=SLACK_TOKEN)
 
 # Req 2-2-1. pickle로 저장된 model.clf 파일 불러오기
+with open('naive_model.clf', 'rb') as nai_model:
+    naive_model = pickle.load(nai_model)
+with open('rogistic_model.clf', 'rb') as rogi_model:
+    rogistic_model = pickle.load(rogi_model)
+
 pickle_obj = None
 word_indices = None
 clf = None
