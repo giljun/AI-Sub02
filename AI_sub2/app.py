@@ -27,7 +27,7 @@ with open('rogistic_model.clf', 'rb') as rogi_model:
 
 pickle_obj = None
 word_indices = None
-clf = None
+clf = naive_model
 
 # Req 2-2-2. 토큰화 및 one-hot 임베딩하는 전 처리
 def preprocess():
