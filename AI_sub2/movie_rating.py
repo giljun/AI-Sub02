@@ -81,7 +81,8 @@ clf.fit(X, Y)
 clf2 = LogisticRegression()
 clf2.fit(X, Y)
 
-
+Naive_store = [clf, word_indices]
+Logistic_store = [clf2, word_indices]
 """
 테스트 파트
 """
@@ -99,10 +100,10 @@ print("Logistic regression accuracy: {}".format(clf2.score(X, Y)))
 # Req 1-4. pickle로 학습된 모델 데이터 저장
 """
 with open('naive_model.clf', 'wb') as handle:
-    pickle.dump(clf, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    pickle.dump(Naive_store, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 with open('rogistic_model.clf', 'wb') as handle:
-    pickle.dump(clf2, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    pickle.dump(Logistic_store, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 

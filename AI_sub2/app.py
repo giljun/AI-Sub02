@@ -11,8 +11,8 @@ from scipy.sparse import lil_matrix
 
 
 # slack 연동 정보 입력 부분
-SLACK_TOKEN = "xoxb-619154581858-619130324707-N5IswN8gy8ZO9mcIxVYPhrkP"
-SLACK_SIGNING_SECRET = "2e319790605d216c629f5c107aa16c2a"
+SLACK_TOKEN = "xoxb-732922739009-747806526096-Ky1D0CPXjquJmi9054KZoOLu"
+SLACK_SIGNING_SECRET = "a4047071f49de1e04f8ab0a2de88447e"
 
 app = Flask(__name__)
 
@@ -25,9 +25,9 @@ with open('naive_model.clf', 'rb') as nai_model:
 with open('rogistic_model.clf', 'rb') as rogi_model:
     rogistic_model = pickle.load(rogi_model)
 
-pickle_obj = None
-word_indices = None
-clf = naive_model
+pickle_obj = naive_model
+word_indices = naive_model[1]
+clf = naive_model[0]
 
 # Req 2-2-2. 토큰화 및 one-hot 임베딩하는 전 처리
 def preprocess():
