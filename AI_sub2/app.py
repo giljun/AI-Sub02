@@ -30,17 +30,29 @@ word_indices = naive_model[1]
 clf = naive_model[0]
 
 # Req 2-2-2. 토큰화 및 one-hot 임베딩하는 전 처리
-def preprocess():
-
-    return None
+def preprocess(word):
+    okt = Okt();
+    raw = okt.pos(word)
+    X = lil_matrix( (1, len(word_indices)))
+    for word in raw:
+        index = word_indices[word[0]]
+        X[0, index] = 1
+    return X
 
 # Req 2-2-3. 긍정 혹은 부정으로 분류
-def classify():
-
-    return None
+def classify(X):
+    return clf.predict(X)[0]
     
 # Req 2-2-4. app.db 를 연동하여 웹에서 주고받는 데이터를 DB로 저장
-    
+conn = sqlite3.connect("app.db")
+c = conn.cursor()
+
+def insert(text):
+    c.execute("INSERT INTO search_history(query) VALUES (?);", (text,))
+    conn.commit()
+
+def send_text(channel, app_text):
+    slack_web_client.chat_postMessage(channel=channel, text=app_text)
 
 # 챗봇이 멘션을 받았을 경우
 @slack_events_adaptor.on("app_mention")
@@ -48,6 +60,17 @@ def app_mentioned(event_data):
     channel = event_data["event"]["channel"]
     text = event_data["event"]["text"]
 
+    text = " ".join(list(text.split())[1:])
+    data = preprocess(text)
+    result = classify(data)
+
+    if result:
+        app_text = "긍정적 리뷰"
+    else:
+        app_text = "부정적 리뷰"
+    insert(app_text)
+    t = Thread(target=send_text, args=(channel, app_text))
+    t.start()
 
 @app.route("/", methods=["GET"])
 def index():

@@ -106,9 +106,6 @@ with open('rogistic_model.clf', 'wb') as handle:
     pickle.dump(Logistic_store, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-
-
-
 '''
 """
 # Naive bayes classifier algorithm part
